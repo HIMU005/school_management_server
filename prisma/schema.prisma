@@ -13,12 +13,55 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+  GUARDIAN
+}
+
 model User {
   id        Int      @id @default(autoincrement())
-  userName  String?
+  name      String?
   email     String   @unique
+  age       Int?
   password  String?
+  phone     String?
+  sex       String?
+  role      Role     @default(STUDENT)
+  isAdmin   Boolean  @default(false)
   createdAt DateTime @default(now())
-  role      String?
-  isAdmin   Boolean
+  lastLogIn DateTime @default(now())
+
+  Teacher Teacher?
+
+  Student Student?
+
+  Guardian Guardian?
+}
+
+model Teacher {
+  id          Int      @id @default(autoincrement())
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user_id     Int      @unique
+  position    String?
+  passedFrom  String?
+  joiningDate DateTime @default(now())
+}
+
+model Student {
+  id       Int       @id @default(autoincrement())
+  user     User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user_id  Int       @unique
+  class    String?
+  session  String?
+  Guardian Guardian?
+}
+
+model Guardian {
+  id         Int     @id @default(autoincrement())
+  user       User    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user_id    Int     @unique
+  student    Student @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  student_id Int     @unique
 }
