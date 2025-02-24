@@ -10,12 +10,6 @@ export const createUser = async (req, res) => {
     },
   });
 
-  if (findUser) {
-    return res.json({
-      status: 400,
-      message: "user already exist please choose another email",
-    });
-  }
   // Hash password using the utility function
   const hashedPassword = await hashPassword(password);
   const newUser = await prisma.user.create({
