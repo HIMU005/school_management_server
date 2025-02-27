@@ -66,3 +66,12 @@ model Guardian {
   student    Student @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   student_id Int     @unique
 }
+
+model Banner {
+  id          Int    @id @default(autoincrement())
+  bgImage     String
+  buttonTitle String
+  direction   String
+}
+
+//npx prisma migrate dev --name init
