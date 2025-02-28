@@ -20,25 +20,39 @@ enum Role {
   GUARDIAN
 }
 
+enum Status {
+  PRESENT
+  ABSENT
+  LATE
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum PaymentStatus {
+  PAID
+  FAILED
+  UNPAID
+}
+
 model User {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   name      String?
-  email     String   @unique
+  email     String    @unique
   age       Int?
   photoURL  String
   password  String?
   phone     String?
-  sex       String?
-  role      Role     @default(STUDENT)
-  isAdmin   Boolean  @default(false)
-  createdAt DateTime @default(now())
-  lastLogIn DateTime @default(now())
-
-  Teacher Teacher?
-
-  Student Student?
-
-  Guardian Guardian?
+  gender    Gender?
+  role      Role      @default(STUDENT)
+  createdAt DateTime  @default(now())
+  lastLogIn DateTime  @default(now())
+  Teacher   Teacher?
+  Student   Student?
+  Guardian  Guardian?
+  Payment   Payment[] @relation("UserPayment")
 }
 
 model Teacher {
@@ -48,15 +62,18 @@ model Teacher {
   position    String?
   passedFrom  String?
   joiningDate DateTime @default(now())
+  Class       Class[]  @relation("TeacherClass")
 }
 
 model Student {
-  id       Int       @id @default(autoincrement())
-  user     User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  user_id  Int       @unique
-  class    String?
-  session  String?
-  Guardian Guardian?
+  id         Int          @id @default(autoincrement())
+  user       User         @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user_id    Int          @unique
+  class      String?
+  session    String?
+  Guardian   Guardian?
+  Attendance Attendance[] @relation("StudentAttendance")
+  ReportCard ReportCard[] @relation("StudentReport")
 }
 
 model Guardian {
@@ -72,6 +89,49 @@ model Banner {
   bgImage     String
   buttonTitle String
   direction   String
+}
+
+model Class {
+  id         Int          @id @default(autoincrement())
+  created_at DateTime     @default(now())
+  teacher    Teacher?     @relation("TeacherClass", fields: [teacher_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  teacher_id Int?
+  Attendance Attendance[] @relation("AttendenceClass")
+}
+
+model Attendance {
+  id         Int      @id @default(autoincrement())
+  takingTime DateTime @default(now())
+  status     Status   @default(ABSENT)
+  student    Student? @relation("StudentAttendance", fields: [student_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  student_id Int?
+  class      Class?   @relation("AttendenceClass", fields: [class_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  class_id   Int?
+}
+
+model ReportCard {
+  id         Int      @id @default(autoincrement())
+  create_at  DateTime @default(now())
+  student    Student? @relation("StudentReport", fields: [student_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  student_id Int?
+  Grade      Grade[]  @relation("ReportCardGrade")
+}
+
+model Grade {
+  id            Int         @id @default(autoincrement())
+  subject       String
+  score         Float?
+  reportCard    ReportCard? @relation("ReportCardGrade", fields: [reportCard_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  reportCard_id Int?
+}
+
+model Payment {
+  id          String        @id @default(uuid())
+  amount      Float
+  paymentDate DateTime?
+  status      PaymentStatus
+  user        User?         @relation("UserPayment", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user_id     Int?
 }
 
 //npx prisma migrate dev --name init
