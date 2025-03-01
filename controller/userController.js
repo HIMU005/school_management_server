@@ -3,7 +3,7 @@ import { hashPassword } from "../utils/hashPassword.js";
 
 //post an user info with email and password
 export const createUser = async (req, res) => {
-  const { name, email, password, photoURL } = req.body;
+  const { name, email, password, photoURL, role } = req.body;
   const findUser = await prisma.user.findUnique({
     where: {
       email: email,
@@ -18,6 +18,7 @@ export const createUser = async (req, res) => {
       email,
       password: hashedPassword,
       photoURL,
+      role,
     },
   });
 
@@ -30,7 +31,7 @@ export const createUser = async (req, res) => {
 
 //post an user info with email
 export const createUserForEmailLogin = async (req, res) => {
-  const { name, email, password, profileImge } = req.body;
+  const { name, email, password, photoURL } = req.body;
   const findUser = await prisma.user.findUnique({
     where: {
       email: email,
