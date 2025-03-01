@@ -95,6 +95,7 @@ model Banner {
 
 model Class {
   id          Int          @id @default(autoincrement())
+  name        String
   createdAt   DateTime     @default(now())
   teacher     Teacher?     @relation("TeacherClass", fields: [teacher_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
   teacher_id  Int?
