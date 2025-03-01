@@ -46,13 +46,14 @@ model User {
   password  String?
   phone     String?
   gender    Gender?
+  dob       DateTime?
   role      Role      @default(STUDENT)
   createdAt DateTime  @default(now())
   lastLogIn DateTime  @default(now())
-  Teacher   Teacher?
-  Student   Student?
-  Guardian  Guardian?
-  Payment   Payment[] @relation("UserPayment")
+  teacher   Teacher?
+  student   Student?
+  guardian  Guardian?
+  payments  Payment[] @relation("UserPayment")
 }
 
 model Teacher {
@@ -62,26 +63,27 @@ model Teacher {
   position    String?
   passedFrom  String?
   joiningDate DateTime @default(now())
-  Class       Class[]  @relation("TeacherClass")
+  classes     Class[]  @relation("TeacherClass")
 }
 
 model Student {
-  id         Int          @id @default(autoincrement())
-  user       User         @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  user_id    Int          @unique
-  class      String?
-  session    String?
-  Guardian   Guardian?
-  Attendance Attendance[] @relation("StudentAttendance")
-  ReportCard ReportCard[] @relation("StudentReport")
+  id          Int          @id @default(autoincrement())
+  user        User         @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user_id     Int          @unique
+  class       Class?       @relation("ClassStudent", fields: [class_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  class_id    Int?
+  session     String?
+  guardian    Guardian?
+  attendances Attendance[] @relation("StudentAttendance")
+  reportCards ReportCard[] @relation("StudentReport")
 }
 
 model Guardian {
-  id         Int      @id @default(autoincrement())
-  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  user_id    Int      @unique
-  student    Student? @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  student_id Int?     @unique
+  id         Int     @id @default(autoincrement())
+  user       User    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user_id    Int     @unique
+  student    Student @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  student_id Int     @unique
 }
 
 model Banner {
@@ -92,11 +94,12 @@ model Banner {
 }
 
 model Class {
-  id         Int          @id @default(autoincrement())
-  created_at DateTime     @default(now())
-  teacher    Teacher?     @relation("TeacherClass", fields: [teacher_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  teacher_id Int?
-  Attendance Attendance[] @relation("AttendenceClass")
+  id          Int          @id @default(autoincrement())
+  createdAt   DateTime     @default(now())
+  teacher     Teacher?     @relation("TeacherClass", fields: [teacher_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  teacher_id  Int?
+  attendances Attendance[] @relation("ClassAttendance")
+  students    Student[]    @relation("ClassStudent")
 }
 
 model Attendance {
@@ -105,16 +108,16 @@ model Attendance {
   status     Status   @default(ABSENT)
   student    Student? @relation("StudentAttendance", fields: [student_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   student_id Int?
-  class      Class?   @relation("AttendenceClass", fields: [class_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  class      Class?   @relation("ClassAttendance", fields: [class_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   class_id   Int?
 }
 
 model ReportCard {
   id         Int      @id @default(autoincrement())
-  create_at  DateTime @default(now())
+  createdAt  DateTime @default(now())
   student    Student? @relation("StudentReport", fields: [student_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   student_id Int?
-  Grade      Grade[]  @relation("ReportCardGrade")
+  grades     Grade[]  @relation("ReportCardGrade")
 }
 
 model Grade {
