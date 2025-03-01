@@ -24,3 +24,21 @@ export const createAStudent = async (req, res) => {
     });
   }
 };
+
+// get all student information
+export const getAllStudents = async (req, res) => {
+  try {
+    const students = await prisma.student.findMany();
+    return res.json({
+      status: 200,
+      data: students,
+      message: "Students fetched successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+};
