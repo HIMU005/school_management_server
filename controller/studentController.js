@@ -42,3 +42,34 @@ export const getAllStudents = async (req, res) => {
     });
   }
 };
+
+// get a single student information
+export const getASingleStudent = async (req, res) => {
+  const { id } = req.params;
+  const userId = parseInt(id, 10);
+  if (isNaN(userId)) {
+    return res.status(400).json({ error: "Invalid user ID" });
+  }
+  try {
+    const singleStudent = await prisma.student.findUnique({
+      where: { user_id: userId },
+    });
+    if (singleStudent) {
+      return res.json({
+        status: 200,
+        data: singleStudent,
+        message: "Information of student fetched successfully",
+      });
+    } else {
+      return res.json({
+        status: 404,
+        message: "No information for that user Id",
+      });
+    }
+  } catch (error) {
+    return res.json({
+      status: 500,
+      message: "Internal server Error!! Try after some time",
+    });
+  }
+};
