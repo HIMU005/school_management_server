@@ -42,3 +42,36 @@ export const getAllClass = async (req, res) => {
     });
   }
 };
+
+// get a single class
+export const getASingleClass = async (req, res) => {
+  const { id } = req.params;
+
+  const classId = parseInt(id, 10);
+  if (isNaN(classId)) {
+    return res.status(400).json({ error: "Invalid class ID" });
+  }
+
+  try {
+    const singleClass = await prisma.class.findUnique({
+      where: { id: classId },
+    });
+    if (singleClass) {
+      return res.json({
+        status: 200,
+        message: "class fetched successfully",
+        data: singleClass,
+      });
+    } else {
+      return res.json({
+        status: 404,
+        message: "class don't exist in our database",
+      });
+    }
+  } catch (error) {
+    return res.json({
+      status: 500,
+      message: `server errror try again latter error: ${error}`,
+    });
+  }
+};

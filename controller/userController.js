@@ -29,6 +29,30 @@ export const createUser = async (req, res) => {
   });
 };
 
+export const getAllUser = async (req, res) => {
+  try {
+    const users = await prisma.user.findMany();
+    if (users) {
+      return res.json({
+        status: 200,
+        message: "All user fetched successfully",
+        data: users,
+      });
+    } else {
+      return res.json({
+        status: 404,
+        message: "No user is in the database",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+};
+
 //post an user info with email
 export const createUserForEmailLogin = async (req, res) => {
   const { name, email, password, photoURL } = req.body;
@@ -82,6 +106,37 @@ export const getAUser = async (req, res) => {
     return res.json({
       status: 500,
       message: "server errror try again latter ",
+    });
+  }
+};
+
+// get the information using using user_id
+export const getAUserById = async (req, res) => {
+  const { id } = req.params;
+  const userId = parseInt(id, 10);
+  if (isNaN(userId)) {
+    return res.status(400).json({ error: "Invalid user ID" });
+  }
+  try {
+    const findAUserById = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (findAUserById) {
+      return res.json({
+        status: 200,
+        message: "user fetched successfully",
+        data: findAUserById,
+      });
+    } else {
+      return res.json({
+        status: 404,
+        message: "user not exit in out database with that id",
+      });
+    }
+  } catch (error) {
+    return res.json({
+      status: 500,
+      message: `server errror try again latter error: ${error}`,
     });
   }
 };

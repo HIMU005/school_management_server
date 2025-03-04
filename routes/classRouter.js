@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { createAClass, getAllClass } from "../controller/classController.js";
+import {
+  createAClass,
+  getAllClass,
+  getASingleClass,
+} from "../controller/classController.js";
 
 const router = Router();
 
@@ -8,5 +12,8 @@ router.post("/", createAClass);
 
 // get all class data
 router.get("/", getAllClass);
+
+// get a single class information using id
+router.get("/:id", getASingleClass);
 
 export default router;
