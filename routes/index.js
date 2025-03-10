@@ -2,6 +2,7 @@ import { Router } from "express";
 import classRouter from "./classRouter.js";
 import studentRouter from "./studentRouter.js";
 import teacherRouter from "./teacherRouter.js";
+import updateRouter from "./updateRouter.js";
 import userRouter from "./userRouter.js";
 const router = Router();
 
@@ -16,5 +17,8 @@ router.use("/api/teacher", teacherRouter);
 
 // route for classes
 router.use("/api/class", classRouter);
+
+// update router
+router.use("/api/update_user", updateRouter);
 
 export default router;
