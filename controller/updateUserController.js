@@ -30,6 +30,18 @@ export const updateUser = async (req, res) => {
       });
     }
 
+    // update if role is TEACHER
+    if (role === "TEACHER" && roleData && roleData?.id) {
+      const { position, passedFrom, id: teacherId } = roleData;
+      const updateTeacher = await prisma.teacher.update({
+        where: { id: teacherId },
+        data: {
+          position,
+          passedFrom,
+        },
+      });
+    }
+
     return res.json({
       status: 200,
       message: "User resourse updated successfully",
