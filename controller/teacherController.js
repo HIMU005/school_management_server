@@ -43,3 +43,34 @@ export const getAllTeachers = async (req, res) => {
     });
   }
 };
+
+export const getASingleTeacher = async (req, res) => {
+  const { id } = req.params;
+  const userId = parseInt(id, 10);
+  if (isNaN(userId)) {
+    return res.status(400).json({ error: "Invalid user ID" });
+  }
+
+  try {
+    const singleTeacher = await prisma.teacher.findUnique({
+      where: { user_id: userId },
+    });
+    if (singleTeacher) {
+      return res.json({
+        status: 200,
+        data: singleTeacher,
+        message: "Information of a teacher fetched successfully",
+      });
+    } else {
+      return res.json({
+        status: 404,
+        message: "No information have found for that user",
+      });
+    }
+  } catch (error) {
+    return res.json({
+      status: 500,
+      message: "Internal server Error!! Try after some time",
+    });
+  }
+};
