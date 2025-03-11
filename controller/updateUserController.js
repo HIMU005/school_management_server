@@ -2,9 +2,8 @@ import prisma from "../DB/db.config.js";
 
 export const updateUser = async (req, res) => {
   const { id } = req.params;
-  const { name, dob, age, gender, phone, roleData, role } = req.body;
+  const { name, dob, age, gender, phone, roleData, role, photoURL } = req.body;
 
-  console.log("hitted the api");
   try {
     const updateUser = await prisma.user.update({
       where: { id: Number(id) },
@@ -14,6 +13,7 @@ export const updateUser = async (req, res) => {
         age,
         gender,
         phone,
+        photoURL,
       },
     });
 
