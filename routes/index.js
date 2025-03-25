@@ -1,5 +1,6 @@
 import { Router } from "express";
 import classRouter from "./classRouter.js";
+import filterRouter from "./filterRouter.js";
 import studentRouter from "./studentRouter.js";
 import teacherRouter from "./teacherRouter.js";
 import updateRouter from "./updateRouter.js";
@@ -20,5 +21,8 @@ router.use("/api/class", classRouter);
 
 // update router
 router.use("/api/update_user", updateRouter);
+
+// filter router
+router.use("/api/filter", filterRouter);
 
 export default router;
