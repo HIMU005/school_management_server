@@ -43,7 +43,7 @@ export const getAllStudents = async (req, res) => {
   }
 };
 
-// get a single student information
+// get a single student information by id
 export const getASingleStudent = async (req, res) => {
   const { id } = req.params;
   const userId = parseInt(id, 10);

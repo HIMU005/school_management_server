@@ -6,11 +6,6 @@ import studentRouter from "./studentRouter.js";
 import teacherRouter from "./teacherRouter.js";
 import updateRouter from "./updateRouter.js";
 import userRouter from "./userRouter.js";
-// import SSLCommerzPayment from "sslcommerz-lts";
-
-const store_id = process.env.STORE_ID;
-const store_passwd = process.env.STORE_PASS;
-const is_live = false;
 const router = Router();
 
 // route for user
