@@ -29,7 +29,11 @@ export const createATeacher = async (req, res) => {
 // get all student information
 export const getAllTeachers = async (req, res) => {
   try {
-    const teachers = await prisma.teacher.findMany();
+    const teachers = await prisma.teacher.findMany({
+      include: {
+        user: true,
+      },
+    });
     return res.json({
       status: 200,
       data: teachers,
