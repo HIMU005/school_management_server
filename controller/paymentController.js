@@ -51,6 +51,7 @@ export const paymentByStudent = async (req, res) => {
       month,
       year,
       user_id: user.id,
+      user_email: user.email,
       amount: 5000,
       status: "PENDING",
       method: "SSLCommerz",
@@ -67,6 +68,7 @@ export const paymentByStudent = async (req, res) => {
   });
 };
 
+// update when bill paid
 export const paymentTransactionId = async (req, res) => {
   const { transactionId } = req.params;
   try {
@@ -83,6 +85,26 @@ export const paymentTransactionId = async (req, res) => {
     return res.json({
       status: 404,
       message: error.message,
+    });
+  }
+};
+
+// see all the transaction by a user
+export const getPaymentInfoForAUserByEmail = async (req, res) => {
+  const { email } = req.params;
+  try {
+    const payments = await prisma.payment.findMany({
+      where: { user_email: email },
+    });
+    return res.status(200).json({
+      status: 200,
+      data: payments,
+      message: `All payment fetch for email ${email} done successfully`,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: "Database error during payment creation",
     });
   }
 };

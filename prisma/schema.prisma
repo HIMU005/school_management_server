@@ -36,6 +36,7 @@ enum PaymentStatus {
   FAILED
   UNPAID
   PENDING
+  CANCELED
 }
 
 model User {
@@ -137,6 +138,7 @@ model Payment {
   status        PaymentStatus
   user          User?         @relation("UserPayment", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   user_id       Int?
+  user_email    String?
   transactionId String        @unique
   method        String
   month         String

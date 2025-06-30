@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  getPaymentInfoForAUserByEmail,
   paymentByStudent,
   paymentTransactionId,
 } from "../controller/paymentController.js";
@@ -11,5 +12,8 @@ router.post("/", paymentByStudent);
 
 // payment by id
 router.post("/:transactionId", paymentTransactionId);
+
+// get all payment
+router.get("/:email", getPaymentInfoForAUserByEmail);
 
 export default router;
