@@ -6,6 +6,7 @@ import studentRouter from "./studentRouter.js";
 import teacherRouter from "./teacherRouter.js";
 import updateRouter from "./updateRouter.js";
 import userRouter from "./userRouter.js";
+import adminRouter from "./adminRouter.js";
 const router = Router();
 
 // route for user
@@ -28,5 +29,8 @@ router.use("/api/filter", filterRouter);
 
 //payment router
 router.use("/api/payment", paymentRouter);
+
+// admin router
+router.use("/api/admin", adminRouter);
 
 export default router;

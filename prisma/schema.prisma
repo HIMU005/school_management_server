@@ -55,17 +55,19 @@ model User {
   teacher   Teacher?
   student   Student?
   guardian  Guardian?
+  isAdmin   Boolean   @default(false)
   payments  Payment[] @relation("UserPayment")
 }
 
 model Teacher {
-  id          Int      @id @default(autoincrement())
-  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  user_id     Int      @unique
-  position    String?
-  passedFrom  String?
-  joiningDate DateTime @default(now())
-  classes     Class[]  @relation("TeacherClass")
+  id               Int       @id @default(autoincrement())
+  user             User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user_id          Int       @unique
+  position         String?
+  passedFrom       String?
+  joiningDate      DateTime  @default(now())
+  classes          Class[]   @relation("TeacherClass")
+  enrolledSubjects Subject[] @relation("TeacherSubject")
 }
 
 model Student {
@@ -78,6 +80,7 @@ model Student {
   guardian    Guardian?
   attendances Attendance[] @relation("StudentAttendance")
   reportCards ReportCard[] @relation("StudentReport")
+  Subject     Subject[]    @relation("studentSubject")
 }
 
 model Guardian {
@@ -125,8 +128,9 @@ model ReportCard {
 
 model Grade {
   id            Int         @id @default(autoincrement())
-  subject       String
   score         Float?
+  subject       Subject?    @relation("subjectGrade", references: [id], onDelete: Cascade, onUpdate: Cascade, fields: [subjectId])
+  subjectId     Int?
   reportCard    ReportCard? @relation("ReportCardGrade", fields: [reportCard_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   reportCard_id Int?
 }
@@ -143,6 +147,17 @@ model Payment {
   method        String
   month         String
   year          String
+}
+
+model Subject {
+  id               Int       @id @default(autoincrement())
+  name             String
+  teacher          Teacher?  @relation("TeacherSubject", fields: [teacherId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  teacherId        Int?
+  description      String?
+  enrolledStudents Student[] @relation("studentSubject")
+  createdAt        DateTime  @default(now())
+  grades           Grade[]   @relation("subjectGrade")
 }
 
 //npx prisma migrate dev --name init
