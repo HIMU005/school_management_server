@@ -5,6 +5,7 @@ const store_id = process.env.STORE_ID;
 const store_passwd = process.env.STORE_PASS;
 const is_live = false;
 const router = Router();
+
 export const paymentByStudent = async (req, res) => {
   const { user, month, year } = req.body;
   const transactionId = `TXN_${Date.now()}`;
@@ -13,10 +14,10 @@ export const paymentByStudent = async (req, res) => {
     total_amount: 5000,
     currency: "BDT",
     tran_id: transactionId,
-    success_url: `http://localhost:8000/api/payment/${transactionId}`,
+    success_url: `http://localhost:8000/api/payment/success/${transactionId}`,
 
-    fail_url: "http://localhost:8000/fail",
-    cancel_url: "http://localhost:8000/cancel",
+    fail_url: `http://localhost:8000/api/payment/fail/${transactionId}`,
+    cancel_url: `http://localhost:8000/api/payment/cancle/${transactionId}`, // okey
     ipn_url: "http://localhost:8000/ipn",
     shipping_method: "Courier",
     product_name: "Computer.",
@@ -69,17 +70,57 @@ export const paymentByStudent = async (req, res) => {
 };
 
 // update when bill paid
-export const paymentTransactionId = async (req, res) => {
+export const paymentSuccessTransactionId = async (req, res) => {
   const { transactionId } = req.params;
   try {
-    const payment = await prisma.payment.update({
+    await prisma.payment.update({
       where: { transactionId },
       data: {
         status: "PAID",
         paymentDate: new Date(),
       },
     });
-    console.log("try to redirect");
+    return res.redirect("http://localhost:5173/dashboard/see-payment-list");
+  } catch (error) {
+    return res.json({
+      status: 404,
+      message: error.message,
+    });
+  }
+};
+
+// update when bill failed
+export const paymentFailTransactionId = async (req, res) => {
+  const { transactionId } = req.params;
+  try {
+    const response = await prisma.payment.update({
+      where: { transactionId },
+      data: {
+        status: "FAILED",
+        paymentDate: new Date(),
+      },
+    });
+    console.log(response);
+    return res.redirect("http://localhost:5173/dashboard/see-payment-list");
+  } catch (error) {
+    return res.json({
+      status: 404,
+      message: error.message,
+    });
+  }
+};
+
+// update when bill cancle
+export const paymentCancleTransactionId = async (req, res) => {
+  const { transactionId } = req.params;
+  try {
+    await prisma.payment.update({
+      where: { transactionId },
+      data: {
+        status: "CANCELED",
+        paymentDate: new Date(),
+      },
+    });
     return res.redirect("http://localhost:5173/dashboard/see-payment-list");
   } catch (error) {
     return res.json({
