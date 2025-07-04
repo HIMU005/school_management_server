@@ -28,7 +28,11 @@ export const createAStudent = async (req, res) => {
 // get all student information
 export const getAllStudents = async (req, res) => {
   try {
-    const students = await prisma.student.findMany();
+    const students = await prisma.student.findMany({
+      include: {
+        user: true,
+      },
+    });
     return res.json({
       status: 200,
       data: students,

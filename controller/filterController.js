@@ -25,15 +25,18 @@ export const filter_user_for_attendance = async (req, res) => {
 
 // filter for teacher
 export const show_attendance_after_filter = async (req, res) => {
-  const selectedClass = parseInt(req.query.selectedClass);
+  const student_id = req.query.student_id
+    ? parseInt(req.query.student_id)
+    : null;
+  console.log(student_id);
+
+  const filterClause = {
+    ...(student_id && { student_id: student_id }),
+  };
 
   try {
     const attendances = await prisma.attendance.findMany({
-      where: selectedClass
-        ? {
-            class_id: selectedClass,
-          }
-        : {},
+      where: filterClause,
       include: {
         student: {
           include: {
